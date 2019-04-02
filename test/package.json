@@ -5,7 +5,7 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "test": "npx jest --verbose src"
+    "test": "jest"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
