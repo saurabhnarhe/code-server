@@ -11,6 +11,7 @@ const vscodePath = path.join(libPath, "vscode");
 const pkgsPath = path.join(__dirname, "../packages");
 const defaultExtensionsPath = path.join(libPath, "VSCode-linux-x64/resources/app/extensions");
 const vscodeVersion = process.env.VSCODE_VERSION || "1.32.0";
+const binaryPath = path.join(__dirname, `../packages/server/cli-${os.platform()}-${os.arch()}`);
 
 const buildServerBinary = register("build:server:binary", async (runner) => {
 	await ensureInstalled();
@@ -241,7 +242,6 @@ register("package", async (runner, releaseTag) => {
 	fse.removeSync(archiveDir);
 	fse.mkdirpSync(archiveDir);
 
-	const binaryPath = path.join(__dirname, `../packages/server/cli-${os.platform()}-${os.arch()}`);
 	const binaryDestination = path.join(archiveDir, "code-server");
 	fse.copySync(binaryPath, binaryDestination);
 	fs.chmodSync(binaryDestination, "755");
@@ -253,6 +253,17 @@ register("package", async (runner, releaseTag) => {
 	await os.platform() === "linux"
 		? runner.execute("tar", ["-cvzf", `${archiveName}.tar.gz`, `${archiveName}`])
 		: runner.execute("zip", ["-r", `${archiveName}.zip`, `${archiveName}`]);
+});
+
+register("test:e2e", async (runner) => {
+	if (!fs.existsSync(binaryPath)) {
+		throw new Error("Binary must be built to test");
+	}
+
+	const test = await runner.execute(isWin ? "npm.cmd" : "npm", ["run", "test:e2e"]);
+	if (test.exitCode !== 0) {
+		throw new Error(`Tests failed: ${test.stderr}`);
+	}
 });
 
 run();

@@ -10,7 +10,8 @@
     "postinstall": "npm-run-all --parallel packages:install build:rules",
     "start": "cd ./packages/server && yarn start",
     "task": "ts-node -r tsconfig-paths/register build/tasks.ts",
-    "test": "cd ./packages && yarn test"
+    "test": "cd ./packages && yarn test",
+    "test:e2e": "cd ./test && yarn test"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
