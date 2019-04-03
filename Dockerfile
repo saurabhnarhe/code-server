@@ -20,6 +20,10 @@ FROM ubuntu:18.10
 WORKDIR /root/project
 COPY --from=0 /src/packages/server/cli-linux-x64 /usr/local/bin/code-server
 EXPOSE 8443
+EXPOSE 3000
+EXPOSE 8000
+EXPOSE 8080
+EXPOSE 3001
 
 RUN apt-get update && apt-get install -y \
 	openssl \
